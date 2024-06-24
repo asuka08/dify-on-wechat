@@ -44,10 +44,10 @@ def run():
     try:
         # load config
         load_config()
-        # ctrl + c
-        sigterm_handler_wrap(signal.SIGINT)
-        # kill signal
-        sigterm_handler_wrap(signal.SIGTERM)
+        # # ctrl + c
+        # sigterm_handler_wrap(signal.SIGINT)
+        # # kill signal
+        # sigterm_handler_wrap(signal.SIGTERM)
 
         # create channel
         channel_name = conf().get("channel_type", "wx")
