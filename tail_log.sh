@@ -1,2 +1,2 @@
-tail -f wechat_robot.log -n 20
+retail -f wechat_robot.log -n 20
 

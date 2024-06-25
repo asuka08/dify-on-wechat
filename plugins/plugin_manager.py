@@ -14,6 +14,15 @@ from config import conf, write_plugin_config
 from .event import *
 
 
+def resource_path(relative_path):
+    """获取资源的绝对路径，开发和 PyInstaller 打包后都适用"""
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 @singleton
 class PluginManager:
     def __init__(self):
@@ -43,15 +52,16 @@ class PluginManager:
         return wrapper
 
     def save_config(self):
-        with open("./plugins/plugins.json", "w", encoding="utf-8") as f:
+
+        with open(resource_path("plugins/plugins.json"), "w", encoding="utf-8") as f:
             json.dump(self.pconf, f, indent=4, ensure_ascii=False)
 
     def load_config(self):
         logger.info("Loading plugins config...")
 
         modified = False
-        if os.path.exists("./plugins/plugins.json"):
-            with open("./plugins/plugins.json", "r", encoding="utf-8") as f:
+        if os.path.exists(resource_path("plugins/plugins.json")):
+            with open(resource_path("plugins/plugins.json"), "r", encoding="utf-8") as f:
                 pconf = json.load(f)
                 pconf["plugins"] = SortedDict(lambda k, v: v["priority"], pconf["plugins"], reverse=True)
         else:
@@ -71,7 +81,7 @@ class PluginManager:
         从 plugins/config.json 中加载所有插件的配置并写入 config.py 的全局配置中，供插件中使用
         插件实例中通过 config.pconf(plugin_name) 即可获取该插件的配置
         """
-        all_config_path = "./plugins/config.json"
+        all_config_path = resource_path("plugins/plugins.json")
         try:
             if os.path.exists(all_config_path):
                 # read from all plugins config
@@ -86,7 +96,7 @@ class PluginManager:
 
     def scan_plugins(self):
         logger.info("Scaning plugins ...")
-        plugins_dir = "./plugins"
+        plugins_dir = resource_path("plugins")
         raws = [self.plugins[name] for name in self.plugins]
         for plugin_name in os.listdir(plugins_dir):
             plugin_path = os.path.join(plugins_dir, plugin_name)
@@ -102,7 +112,8 @@ class PluginManager:
                             if self.loaded[plugin_path] == None:
                                 logger.info("reload module %s" % plugin_name)
                                 self.loaded[plugin_path] = importlib.reload(sys.modules[import_path])
-                                dependent_module_names = [name for name in sys.modules.keys() if name.startswith(import_path + ".")]
+                                dependent_module_names = [name for name in sys.modules.keys() if
+                                                          name.startswith(import_path + ".")]
                                 for name in dependent_module_names:
                                     logger.info("reload module %s" % name)
                                     importlib.reload(sys.modules[name])

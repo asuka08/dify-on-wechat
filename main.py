@@ -1,13 +1,17 @@
+import os.path
 import sys
 import json
 import logging
 from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtWidgets import QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QFormLayout, QDialog, \
-    QDialogButtonBox, QMessageBox, QScrollArea, QWidget, QComboBox, QRadioButton, QButtonGroup, QSpinBox, QFileDialog
+    QDialogButtonBox, QMessageBox, QScrollArea, QWidget, QComboBox, QRadioButton, QButtonGroup, QSpinBox, QFileDialog, QApplication
 from PyQt6.QtCore import pyqtSignal, QObject, Qt, QThread
 from qt_material import apply_stylesheet
 from common.log import logger  # 导入 logger
 import app  # 导入 app.py
+import time
+from config import conf
+from common.utils import resource_path
 
 
 class LogHandler(logging.Handler):
@@ -108,9 +112,10 @@ class ConfigDialog(QDialog):
 
         # Load config
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path, 'r', encoding='utf-8') as f:
                 self.config = json.load(f)
         except Exception as e:
+            logger.exception(e)
             QMessageBox.critical(self, "错误", f"加载配置时出错: {e}")
             self.close()
 
@@ -315,7 +320,7 @@ class ConfigEditor(QtWidgets.QWidget):
         loop = QtCore.QEventLoop()
 
         # 在另一个线程中保存配置
-        QtCore.QTimer.singleShot(2000, lambda: self.save_config(loop))
+        QtCore.QTimer.singleShot(0, lambda: self.save_config(loop))
 
         # 阻塞关闭事件，直到保存配置完成
         loop.exec()
@@ -326,18 +331,26 @@ class ConfigEditor(QtWidgets.QWidget):
 
     def save_config(self, loop):
         # 在这里添加保存配置的代码
-        with open('config.json', 'w') as f:
-            json.dump({"example_key": "example_value"}, f)
+        conf().save_user_datas()
         loop.quit()
-    def save_config(self):
-        # 在这里添加保存配置的代码
-        # 例如，写入配置文件
-        import time
-        time.sleep(2)
 
     def initUI(self):
-        self.setWindowTitle('配置编辑器')
+        self.setWindowTitle('客服助手')
+        self.setWindowIcon(QtGui.QIcon(resource_path("favicon.ico")))
         self.setGeometry(300, 300, 800, 600)
+
+
+        screen = QApplication.primaryScreen()
+        screen_geometry = screen.availableGeometry()
+        screen_width = screen_geometry.width()
+        screen_height = screen_geometry.height()
+
+        # 计算窗口左上角的位置
+        x = (screen_width - self.width()) // 2
+        y = int(screen_height * 0.1)  # 偏上位置，可以根据需要调整比例
+
+        self.move(x, y)
+
         self.label = QtWidgets.QLabel('Close the window to see the event in action.', self)
         self.label.setGeometry(50, 50, 300, 50)
 

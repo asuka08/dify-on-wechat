@@ -2,6 +2,7 @@ import io
 import os
 from urllib.parse import urlparse
 from PIL import Image
+import sys
 
 
 def fsize(file):
@@ -54,3 +55,13 @@ def split_string_by_utf8_length(string, max_length, max_split=0):
 def get_path_suffix(path):
     path = urlparse(path).path
     return os.path.splitext(path)[-1].lstrip('.')
+
+
+
+def resource_path(relative_path):
+    """获取资源的绝对路径，开发和 PyInstaller 打包后都适用"""
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)

@@ -35,3 +35,4 @@ plugins/banwords/lib/__pycache__
 client_config.json
 web
 dist
+build

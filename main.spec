@@ -1,44 +1,30 @@
 # -*- mode: python ; coding: utf-8 -*-
+import site
+import importlib.util
+import os
 
 block_cipher = None
+
+# 动态获取ntwork包的路径
+ntwork_spec = importlib.util.find_spec('ntwork')
+ntwork_path = os.path.dirname(ntwork_spec.origin)
+helper_file_path = os.path.join(ntwork_path, 'wc', 'helper_4.0.8.6027.dat')
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
     datas=[
-        ('config-template.json', 'config-template.json'),
-        ('config.json', 'config.json'),
-        ('config.py', 'config.py'),
-        ('LICENSE', 'LICENSE'),
-        ('README.md', 'README.md'),
-        ('requirements.txt', 'requirements.txt'),
-        ('requirements-optional.txt', 'requirements-optional.txt'),
-        ('pyproject.toml', 'pyproject.toml'),
-        ('nixpacks.toml', 'nixpacks.toml'),
-        ('run.log', 'run.log'),
-        ('start.sh', 'start.sh'),
-        ('stop.sh', 'stop.sh'),
-        ('tail_log.sh', 'tail_log.sh'),
-        ('translate', 'translate'),
-        ('voice', 'voice'),
-        ('webmain.py', 'webmain.py'),
-        ('app.py', 'app.py'),
-        ('common', 'common'),
-        ('channel', 'channel'),
-        ('bridge', 'bridge'),
-        ('build', 'build'),
-        ('docs', 'docs'),
-        ('dsl', 'dsl'),
-        ('lib', 'lib'),
-        ('plugins', 'plugins'),
-        ('scripts', 'scripts'),
+        (helper_file_path, 'ntwork/wc/'),
+        ('plugins', 'plugins'),  # 包含 plugins 目录
+        ('favicon.ico', '.'),
+        ('config.json', 'config.json')
     ],
     hiddenimports=['bottle_websocket'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],  # 不需要排除任何 Qt 绑定包
+    excludes=['pyinstaller'],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
@@ -52,17 +38,19 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='main',
+    name='客服助手',  # 指定生成的可执行文件名称
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,  # 确保生成控制台可执行文件，如果需要无控制台则设为 False
+    console=False,  # 如果需要无控制台的 exe，则设为 False
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='favicon.ico',  # 指定图标文件的路径
+    onefile=True,  # 将所有内容打包成一个 exe 文件
 )
 
 coll = COLLECT(
@@ -73,11 +61,4 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name='main',
-)
-
-app = BUNDLE(
-    coll,
-    name='main.app',
-    icon=None,
-    bundle_identifier=None,
 )
