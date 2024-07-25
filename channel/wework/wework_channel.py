@@ -249,6 +249,13 @@ class WeworkChannel(ChatChannel):
     @time_checker
     @_check
     def handle_group(self, cmsg: ChatMessage):
+        room_members = wework.get_room_members(cmsg.other_user_id)
+        send_member = next((member for member in room_members.get("member_list", []) if member.get("user_id") == cmsg.actual_user_id), None)
+        if send_member:
+            cmsg.user_info = send_member
+            cmsg.is_group_onwer = (send_member.get("invite_user_id") == send_member.get("user_id"))
+            cmsg.company_user_id = send_member.get("acctid") or None
+            cmsg.is_company_user = bool(send_member.get("acctid"))
         if cmsg.ctype == ContextType.VOICE:
             if not conf().get("speech_recognition"):
                 return

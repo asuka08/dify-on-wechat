@@ -11,6 +11,7 @@ GEMINI = "gemini"
 DIFY = "dify"
 ZHIPU_AI = "glm-4"
 COZE = "coze"
+QIQU = "qiqu"
 
 
 # model

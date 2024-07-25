@@ -59,6 +59,14 @@ class ChatMessage(object):
     _prepared = False
     _rawmsg = None
 
+    is_company_user = False
+    is_group_admin = False
+    is_group_onwer = False
+
+    company_user_id = None
+
+    user_info = None
+
     def __init__(self, _rawmsg):
         self._rawmsg = _rawmsg
 

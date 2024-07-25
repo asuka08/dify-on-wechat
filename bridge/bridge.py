@@ -37,6 +37,8 @@ class Bridge(object):
             self.btype["chat"] = const.ZHIPU_AI
         if model_type in [const.COZE]:
             self.btype["chat"] = const.COZE
+        if model_type in [const.QIQU]:
+            self.btype["chat"] = const.QIQU
 
         if conf().get("use_linkai") and conf().get("linkai_api_key"):
             self.btype["chat"] = const.LINKAI
