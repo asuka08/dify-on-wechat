@@ -40,19 +40,19 @@ class QiquWework(Plugin):
             raise e
 
     def on_receive_message(self, e_context: EventContext):
-        if e_context["context"].kwargs["msg"].is_group_admin or (
+        if e_context["context"].kwargs["msg"].is_group_owner or (
                 not e_context["context"].kwargs["msg"].is_company_user):
-            print("record")
-            # requests.post("", json={
-            #     "is_group_admin": e_context["context"].kwargs["msg"].is_group_admin,
-            #     "company_user_id": e_context["context"].kwargs["msg"].company_user_id,
-            #     "actual_user_nickname": e_context["context"].kwargs["msg"].actual_user_nickname,
-            #     "from_user_nickname": e_context["context"].kwargs["msg"].from_user_nickname
-            #     # from_user_id
-            #
-            #    })
-            # """
-            #     ChatMessage: id=R:10698764940847169, create_time=1721821589, ctype=TEXT, content=5553, from_user_id=R:10698764940847169, from_user_nickname=测试1, to_user_id=1688857370558766, to_user_nickname=高鑫, other_user_id=R:10698764940847169, other_user_nickname=测试1, is_group=True, is_at=False, actual_user_id=7881300270909054, actual_user_nickname=高鑫, at_list=[]"""
+            requests.post(f"{self.api_base_url}/api/v1/wework/message_record", json={
+                "is_group_owner": e_context["context"].kwargs["msg"].is_group_owner,
+                "company_user_id": e_context["context"].kwargs["msg"].company_user_id,
+                "actual_user_nickname": e_context["context"].kwargs["msg"].actual_user_nickname,
+                "other_user_nickname": e_context["context"].kwargs["msg"].other_user_nickname,
+                "other_user_id": e_context["context"].kwargs["msg"].other_user_id
+            }, headers={
+                "Authorization": f"Bearer {self.api_token}"
+            })
+            """
+                ChatMessage: id=R:10698764940847169, create_time=1721821589, ctype=TEXT, content=5553, from_user_id=R:10698764940847169, from_user_nickname=测试1, to_user_id=1688857370558766, to_user_nickname=高鑫, other_user_id=R:10698764940847169, other_user_nickname=测试1, is_group=True, is_at=False, actual_user_id=7881300270909054, actual_user_nickname=高鑫, at_list=[]"""
 
         e_context.action = EventAction.CONTINUE  # 事件结束，并跳过处理context的默认逻辑
 
@@ -61,21 +61,6 @@ class QiquWework(Plugin):
         if not e_context["context"].kwargs["isgroup"]:
             e_context.action = EventAction.BREAK_PASS
             return
-
-        if e_context["context"].kwargs["msg"].is_group_admin or (
-                not e_context["context"].kwargs["msg"].is_company_user):
-            print("record")
-            # requests.post("", json={
-            #     "is_group_admin": e_context["context"].kwargs["msg"].is_group_admin,
-            #     "company_user_id": e_context["context"].kwargs["msg"].company_user_id,
-            #     "actual_user_nickname": e_context["context"].kwargs["msg"].actual_user_nickname,
-            #     "from_user_nickname": e_context["context"].kwargs["msg"].from_user_nickname
-            #     # from_user_id
-            #
-            #    })
-            # """
-            #     ChatMessage: id=R:10698764940847169, create_time=1721821589, ctype=TEXT, content=5553, from_user_id=R:10698764940847169, from_user_nickname=测试1, to_user_id=1688857370558766, to_user_nickname=高鑫, other_user_id=R:10698764940847169, other_user_nickname=测试1, is_group=True, is_at=False, actual_user_id=7881300270909054, actual_user_nickname=高鑫, at_list=[]"""
-
 
         if self.conf.get("close_reply_company_user", False) and e_context["context"].kwargs["msg"].is_company_user:
             e_context.action = EventAction.BREAK_PASS

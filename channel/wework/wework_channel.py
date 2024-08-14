@@ -253,7 +253,7 @@ class WeworkChannel(ChatChannel):
         send_member = next((member for member in room_members.get("member_list", []) if member.get("user_id") == cmsg.actual_user_id), None)
         if send_member:
             cmsg.user_info = send_member
-            cmsg.is_group_onwer = (send_member.get("invite_user_id") == send_member.get("user_id"))
+            cmsg.is_group_owner = (send_member.get("invite_user_id") == send_member.get("user_id"))
             cmsg.company_user_id = send_member.get("acctid") or None
             cmsg.is_company_user = bool(send_member.get("acctid"))
         if cmsg.ctype == ContextType.VOICE:

@@ -61,7 +61,7 @@ class ChatMessage(object):
 
     is_company_user = False
     is_group_admin = False
-    is_group_onwer = False
+    is_group_owner = False
 
     company_user_id = None
 

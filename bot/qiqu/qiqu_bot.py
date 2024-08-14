@@ -45,4 +45,4 @@ class QiquBot(Bot):
         except Exception as e:
             error_info = f"[QIQU] Exception: {e}"
             logger.exception(error_info)
-            return None, error_info
+            return Reply(ReplyType.TEXT, "机器人不给予回复"), None
