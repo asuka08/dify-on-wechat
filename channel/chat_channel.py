@@ -272,6 +272,7 @@ class ChatChannel(Channel):
                 elif reply.type == ReplyType.IMAGE_URL or reply.type == ReplyType.VOICE or reply.type == ReplyType.IMAGE or reply.type == ReplyType.FILE or reply.type == ReplyType.VIDEO or reply.type == ReplyType.VIDEO_URL:
                     pass
                 elif reply.type == ReplyType.ACCEPT_FRIEND:
+                    # todo:wangdong 这里需要改掉，要回复系统自定义消息
                     pass
                 else:
                     logger.error("[WX] unknown reply type: {}".format(reply.type))
@@ -308,6 +309,7 @@ class ChatChannel(Channel):
 
     # 处理好友申请
     def _build_friend_request_reply(self, context):
+        # todo:wangdong 这里需要改掉，要回复系统自定义消息
         if isinstance(context.content, dict) and "Content" in context.content:
             logger.info("friend request content: {}".format(context.content["Content"]))
             if context.content["Content"] in conf().get("accept_friend_commands", []):

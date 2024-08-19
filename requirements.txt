@@ -11,5 +11,4 @@ pre-commit
 web.py
 PyQt6
 qt_material
-ntwork
 pilk

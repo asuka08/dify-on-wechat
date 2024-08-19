@@ -281,6 +281,7 @@ class WechatChannel(ChatChannel):
             logger.info("[WX] sendVideo url={}, receiver={}".format(video_url, receiver))
 
         elif reply.type == ReplyType.ACCEPT_FRIEND:  # 新增接受好友申请回复类型
+            # todo:wangdong 这里需要改掉，要回复系统自定义消息
             # 假设 reply.content 包含了新好友的用户名
             is_accept = reply.content
             if is_accept:

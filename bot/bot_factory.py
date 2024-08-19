@@ -64,4 +64,7 @@ def create_bot(bot_type):
         from bot.bytedance.bytedance_coze_bot import ByteDanceCozeBot
         return ByteDanceCozeBot()
 
+    elif bot_type == const.ECHOICE:
+        from bot.echoice.e_choice_bot import EChoiceBot
+        return EChoiceBot()
     raise RuntimeError
