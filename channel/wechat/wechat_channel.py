@@ -140,6 +140,8 @@ class WechatChannel(ChatChannel):
             self.name = itchat.instance.storageClass.nickName
             logger.info("Wechat login success, user_id: {}, nickname: {}".format(self.user_id, self.name))
             # start message listener
+            friends = itchat.get_friends()
+            print(friends)
             itchat.run()
         except Exception as e:
             logger.error(e)

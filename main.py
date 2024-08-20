@@ -1,17 +1,21 @@
-import os.path
 import sys
 import json
 import logging
+import sys
+
 from PyQt6 import QtWidgets, QtCore, QtGui
-from PyQt6.QtWidgets import QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QFormLayout, QDialog, \
-    QDialogButtonBox, QMessageBox, QScrollArea, QWidget, QComboBox, QRadioButton, QButtonGroup, QSpinBox, QFileDialog, QApplication
 from PyQt6.QtCore import pyqtSignal, QObject, Qt, QThread
+from PyQt6.QtWidgets import QTextEdit, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QFormLayout, QDialog, \
+    QDialogButtonBox, QMessageBox, QScrollArea, QWidget, QComboBox, QRadioButton, QButtonGroup, QSpinBox, QFileDialog, \
+    QApplication
 from qt_material import apply_stylesheet
-from common.log import logger  # 导入 logger
+
 import app  # 导入 app.py
-import time
-from config import conf
+from bot.echoice import message_constant
+from common.log import logger  # 导入 logger
 from common.utils import resource_path
+from config import conf
+from lib import itchat
 
 
 class LogHandler(logging.Handler):
@@ -339,7 +343,6 @@ class ConfigEditor(QtWidgets.QWidget):
         self.setWindowIcon(QtGui.QIcon(resource_path("favicon.ico")))
         self.setGeometry(300, 300, 800, 600)
 
-
         screen = QApplication.primaryScreen()
         screen_geometry = screen.availableGeometry()
         screen_width = screen_geometry.width()
@@ -366,18 +369,22 @@ class ConfigEditor(QtWidgets.QWidget):
         self.buttons_layout = QVBoxLayout()
 
         # Top Buttons
-        self.modify_button = QPushButton('修改配置', self)
-        self.modify_button.setProperty('class', 'warning')
-        self.modify_button.clicked.connect(self.modify_config)
-        self.buttons_layout.addWidget(self.modify_button)
+        # self.modify_button = QPushButton('修改配置', self)
+        # self.modify_button.setProperty('class', 'warning')
+        # self.modify_button.clicked.connect(self.modify_config)
+        # self.buttons_layout.addWidget(self.modify_button)
 
-        self.import_button = QPushButton('导入配置', self)
-        self.import_button.clicked.connect(self.import_config)
-        self.buttons_layout.addWidget(self.import_button)
+        # self.import_button = QPushButton('导入配置', self)
+        # self.import_button.clicked.connect(self.import_config)
+        # self.buttons_layout.addWidget(self.import_button)
 
-        self.export_button = QPushButton('导出配置', self)
-        self.export_button.clicked.connect(self.export_config)
-        self.buttons_layout.addWidget(self.export_button)
+        # self.export_button = QPushButton('导出配置', self)
+        # self.export_button.clicked.connect(self.export_config)
+        # self.buttons_layout.addWidget(self.export_button)
+
+        self.count_friends_button = QPushButton('统计微信好友人数', self)
+        self.count_friends_button.clicked.connect(self.count_friends)
+        self.buttons_layout.addWidget(self.count_friends_button)
 
         self.buttons_layout.addStretch()
 
@@ -471,6 +478,41 @@ class ConfigEditor(QtWidgets.QWidget):
 
     def close_application(self):
         self.close()
+
+    def count_friends(self):
+        try:
+            friend_count = self.get_friend_count()
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("微信好友人数")
+            msg_box.setText(f"当前微信好友人数: {friend_count} 人")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+            msg_box.button(QMessageBox.StandardButton.Ok).setText("给好友群发消息")
+            msg_box.button(QMessageBox.StandardButton.Ok).clicked.connect(self.broadcast_message)
+            msg_box.exec()
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"获取微信好友人数时出错: {e}")
+            logger.error(f"Error counting friends: {e}")
+
+    def get_friend_count(self):
+        # 这里添加获取微信好友人数的逻辑
+        friends = itchat.get_friends()
+        friends_count = len(friends)
+        return friends_count  # 示例返回值
+
+    def broadcast_message(self):
+        try:
+            # 这里添加给所有微信好友发送消息的逻辑
+            friends = itchat.get_friends()
+            for friend in friends:
+                if friend["NickName"] == "初一和豆丁":
+                    message_list = message_constant.message1
+                    for message in message_list:
+                        itchat.send(message, toUserName=friend["UserName"])
+            QMessageBox.information(self, "消息", "消息已发送给所有微信好友")
+            logger.info("Message broadcasted to all friends.")
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"群发消息时出错: {e}")
+            logger.error(f"Error broadcasting message: {e}")
 
 
 def main():
