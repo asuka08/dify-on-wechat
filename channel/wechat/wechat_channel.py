@@ -110,7 +110,7 @@ def qrCallback(uuid, status, qrcode):
         qr = qrcode.QRCode(border=1)
         qr.add_data(url)
         qr.make(fit=True)
-        qr.print_ascii(invert=True)
+        # qr.print_ascii(invert=True)
 
 
 @singleton
@@ -144,7 +144,8 @@ class WechatChannel(ChatChannel):
             print(friends)
             itchat.run()
         except Exception as e:
-            logger.error(e)
+            print(e)
+            logger.error(e,exc_info=True)
 
     def exitCallback(self):
         try:

@@ -24,8 +24,7 @@ if not hasattr(htmlParser, 'unescape'):
     # FIX Python 3.9 HTMLParser.unescape is removed. See https://docs.python.org/3.9/whatsnew/3.9.html
 try:
     b = u'\u2588'
-    sys.stdout.write(b + '\r')
-    sys.stdout.flush()
+    print(b + '\r')
 except UnicodeEncodeError:
     BLOCK = 'MM'
 else:
